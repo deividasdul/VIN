@@ -9,6 +9,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
 
 const CustomTextField = ({ value, name, label, placeholder, onChange }) => {
   return (
@@ -71,7 +73,23 @@ export default function Home() {
     });
   };
 
+  const excelHeader = [
+    "Fahrgestellnummer",
+    "Modellname lang",
+    "Versandziel",
+    "Feldzuweisung",
+    "Būsena",
+  ];
+
   const [result, setResult] = useState({
+    vin: "",
+    model: "",
+    delivery: "",
+    received: "",
+    status: "",
+  });
+
+  const [tempResult, setTempResult] = useState({
     vin: "",
     model: "",
     delivery: "",
@@ -108,19 +126,23 @@ export default function Home() {
       };
     }
 
-    setNewCars({
-      ...newCars,
-    });
+    // setNewCars({
+    //   ...newCars,
+    // });
+
+    setNewCars([...newCars]);
 
     const uniqueCars = removeDuplicateCars(newCars);
 
     setCarAmount(newCars.length);
 
     const isExported = uniqueCars.filter((car) => {
-      return car.status == "Ne" || car.status == "";
+      return car.status.toLowerCase() == "ne" || !car.status;
     });
 
     setResult(isExported);
+
+    setTempResult(isExported);
 
     var v = "";
     var m = "";
@@ -153,7 +175,6 @@ export default function Home() {
       <Paper elevation={12} sx={{ p: 10 }}>
         <Typography variant="h3" align="center" gutterBottom>
           Kiekis: {carAmount}
-          {newCars.length}
         </Typography>
         <Stack>
           <Stack direction={"row"} gap={4}>
@@ -207,7 +228,9 @@ export default function Home() {
                 m: 4,
                 width: "50%",
               }}
-              onClick={search}
+              onClick={() => {
+                search();
+              }}
             >
               Ieškoti
             </Button>
@@ -228,6 +251,38 @@ export default function Home() {
           />
           <CustomResultTextField label="Būsena" value={result.status} />
         </Stack>
+        <Button
+          disabled={resultAmount == 0}
+          variant="contained"
+          color="success"
+          sx={{ p: 2, m: 2 }}
+          type="button"
+          id="exportExcel"
+          onClick={async () => {
+            console.log(result);
+
+            const worksheet = XLSX.utils.json_to_sheet(tempResult);
+            const workbook = XLSX.utils.book_new();
+
+            XLSX.utils.book_append_sheet(workbook, worksheet, "sheet");
+
+            XLSX.utils.sheet_add_aoa(worksheet, [excelHeader], {
+              origin: "A1",
+            });
+
+            let wscols = [];
+            excelHeader.map((arr) => {
+              wscols.push({ wch: arr.length + 5 });
+            });
+            worksheet["!cols"] = wscols;
+
+            XLSX.writeFile(workbook, "2025.xlsx", {
+              compression: true,
+            });
+          }}
+        >
+          Eksportuoti
+        </Button>
       </Paper>
     </>
   );
