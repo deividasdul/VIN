@@ -173,7 +173,10 @@ export default function Home() {
   return (
     <>
       <Paper elevation={12} sx={{ p: 10 }}>
-        <Typography variant="h3" align="center" gutterBottom>
+        <Typography variant="h4" align="center">
+          Pradiniai duomenys
+        </Typography>
+        <Typography variant="h5" align="center" gutterBottom>
           Kiekis: {carAmount}
         </Typography>
         <Stack>
@@ -232,13 +235,16 @@ export default function Home() {
                 search();
               }}
             >
-              Ieškoti
+              Filtruoti
             </Button>
           </Box>
         </Stack>
       </Paper>
       <Paper elevation={12} sx={{ p: 10 }}>
-        <Typography variant="h3" align="center" gutterBottom>
+        <Typography variant="h4" align="center">
+          Filtruoti duomenys
+        </Typography>
+        <Typography variant="h5" align="center" gutterBottom>
           Kiekis: {resultAmount}
         </Typography>
         <Stack direction={"row"} gap={4}>
