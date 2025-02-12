@@ -1,32 +1,64 @@
 "use client";
 
-import { Typography, Paper, TextField, Button } from "@mui/material";
+import { Paper, TextField, Button, Stack } from "@mui/material";
 import { useState } from "react";
 
 export default function Home() {
-  const vin = [];
-  const [text, setText] = useState("");
+  const [vins, setVins] = useState([]);
+  const [result, setResult] = useState();
+
+  const onChange = (e) => {
+    const { value } = e.target;
+
+    setVins(value);
+  };
+
+  const search = () => {
+    const currentVins = vins.split("\n");
+
+    console.log(currentVins);
+
+    const duplicateVins = currentVins.filter((vin, index) => {
+      return currentVins.indexOf(vin) != index;
+    });
+
+    const duplicateVinsSet = new Set(duplicateVins);
+    const duplicateArray = Array.from(duplicateVinsSet);
+
+    setResult(duplicateArray);
+  };
 
   return (
     <>
-      <Paper elevation={12}>
-        {/* <Typography variant="h2">VIN</Typography> */}
-        <TextField label="VIN" placeholder="WAUZZZFU8SN018678"></TextField>
-        <Button
-          variant="contained"
-          color="success"
-          onClick={() => {
-            setText("loooooooool");
-          }}
-        >
-          Ieškoti
-        </Button>
+      <Paper elevation={12} sx={{ p: 10 }}>
+        <Stack>
+          <TextField
+            value={vins}
+            name="vins"
+            label="Įveskite vin numerių sąrašą"
+            placeholder="WAUZZZGY7SA088553 WAUZZZGY9SA088456 WAUZZZGY1SA083204"
+            minRows={10}
+            maxRows={20}
+            multiline
+            helperText="* Kiekvienas vin numeris turi būti atskirtas vienu tarpu"
+            required
+            onChange={onChange}
+          ></TextField>
+          <Button
+            variant="contained"
+            color="success"
+            sx={{ p: 2 }}
+            onClick={search}
+          >
+            Ieškoti
+          </Button>
+        </Stack>
       </Paper>
-      <h1>{text}</h1>
-      {/* <label>VIN: </label>
-      <textarea placeholder="WAUZZZFU8SN018678" rows={10} />
-      <button>Submit</button>
-      <textarea placeholder="WAUZZZFU8SN018678" rows={10} /> */}
+      <Paper elevation={12} sx={{ p: 10 }}>
+        <Stack>
+          <TextField value={result} minRows={10} multiline disabled></TextField>
+        </Stack>
+      </Paper>
     </>
   );
 }
